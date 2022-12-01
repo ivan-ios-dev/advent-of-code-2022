@@ -11,21 +11,41 @@ struct Elf {
 
 struct ElvesGroup {
   let elves: [Elf]
+  
+  init?(from data: Data) {
+    let str = String(decoding: data, as: UTF8.self)
+    let itemsPerElf = str.components(separatedBy: "\n\n")
     
-  var topCarrierIndex: Int {
-    return 0
+    var elves: [Elf] = []
+    for elfItems in itemsPerElf {
+      let items = elfItems.components(separatedBy: "\n")
+      let elf = Elf(itemsCalories: items.compactMap{ Int($0) } )
+      elves.append(elf)
+    }
+    self.elves = elves
   }
   
-  var topCarrierLoad: Int {
-    return 0
+  var topCarrier: (index: Int, load: Int) {
+    var currentTop: (index: Int, load: Int) = (-1, -1)
+    
+    for (i, elf) in elves.enumerated() {
+      if elf.totalCalories > currentTop.load {
+        currentTop.index = i
+        currentTop.load = elf.totalCalories
+      }
+    }
+    
+    return currentTop
   }
+  
+  
 }
 
 final class AdventDay1Tests: XCTestCase {
-  func test_mostCaloriesCarriesNthElf_andAmountIsX() {
-    let sut = ElvesGroup(elves: [])
-    
-    XCTAssertEqual(sut.topCarrierIndex, -1)
-    XCTAssertEqual(sut.topCarrierLoad, -1)
+  func test_mostCaloriesCarries65thElf_andAmountIs70698() throws {
+    let sut = try XCTUnwrap(ElvesGroup.init(from: TestBundle.inputData(for: 1)))
+    //Elf count is 1 bigger than 0-based index
+    XCTAssertEqual(sut.topCarrier.index + 1, 65)
+    XCTAssertEqual(sut.topCarrier.load, 70698)
   }
 }
