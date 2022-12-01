@@ -38,7 +38,10 @@ struct ElvesGroup {
     return currentTop
   }
   
-  
+  var topThreeCarriersLoad: Int {
+    let sortedLoad = elves.map{ $0.totalCalories }.sorted()
+    return sortedLoad.suffix(3).reduce(0, +)
+  }
 }
 
 final class AdventDay1Tests: XCTestCase {
@@ -47,5 +50,11 @@ final class AdventDay1Tests: XCTestCase {
     //Elf count is 1 bigger than 0-based index
     XCTAssertEqual(sut.topCarrier.index + 1, 65)
     XCTAssertEqual(sut.topCarrier.load, 70698)
+  }
+  
+  func test_topThreeLoadedElves_haveLoadOf206643() throws {
+    let sut = try XCTUnwrap(ElvesGroup.init(from: TestBundle.inputData(for: 1)))
+    
+    XCTAssertEqual(sut.topThreeCarriersLoad, 206643)
   }
 }
