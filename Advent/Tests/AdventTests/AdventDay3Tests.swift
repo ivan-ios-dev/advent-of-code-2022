@@ -39,13 +39,7 @@ final class AdventDay3Tests: XCTestCase {
     XCTAssertEqual(sut.firstCompartment.items.count, 0)
     XCTAssertEqual(sut.secondCompartment.items.count, 0)
   }
-  
-  func test_rucksack_canBeInitialized_fromItemsString() {
-    let sut = Rucksack(itemsString: "vJrwpWtwJgWrhcsFMMfFFhFp")
-    XCTAssertEqual(sut.firstCompartment.items.count, 12)
-    XCTAssertEqual(sut.secondCompartment.items.count, 12)
-  }
-  
+    
   func test_rucksack_splitsTheItemsStringInHalf_duringInitialization() {
     let itemsString = "abcDEF"
     let sut = Rucksack(itemsString: itemsString)
