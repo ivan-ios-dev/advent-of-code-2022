@@ -28,7 +28,21 @@ struct Rucksack {
 }
 
 final class AdventDay3Tests: XCTestCase {
-
+  
+  func test_allRucksacks_fromInput() throws {
+    let input = TestBundle.inputData(for: 3)
+    let itemRows = String(data: input, encoding: .utf8)!.components(separatedBy: "\n").filter{ !$0.isEmpty }
+    
+    var prioritiesSum = 0
+    
+    for row in itemRows {
+      let rucksack = Rucksack(itemsString: row)
+      prioritiesSum += rucksack.duplicate.priority
+    }
+    
+    XCTAssertEqual(prioritiesSum, 8039)
+  }
+  
   func test_compartment_canBeInitialized_fromEmptyString() {
     let sut = Rucksack.Compartment(itemsString: "")
     XCTAssertEqual(sut.items.count, 0)
