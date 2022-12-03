@@ -44,7 +44,9 @@ final class AdventDay3Tests: XCTestCase {
     let itemsString = "abcDEF"
     let sut = Rucksack(itemsString: itemsString)
     XCTAssertEqual(sut.firstCompartment.items.count, itemsString.count / 2)
+    XCTAssertEqual(sut.firstCompartment.items, ["a", "b", "c"])
     XCTAssertEqual(sut.secondCompartment.items.count, itemsString.count / 2)
+    XCTAssertEqual(sut.secondCompartment.items, ["D", "E", "F"])
   }
 }
 
