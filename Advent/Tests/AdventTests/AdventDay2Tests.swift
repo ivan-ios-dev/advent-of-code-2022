@@ -47,7 +47,16 @@ struct GameRound {
   let myShape: HandShape
   let rivalShape: HandShape
   var outcome: Outcome {
-    return .draw
+    //Rock defeats Scissors, Scissors defeats Paper, and Paper defeats Rock
+    
+    switch (myShape, rivalShape) {
+    case (.rock, .rock), (.scissors, .scissors), (.paper, .paper):
+      return .draw
+    case (.paper, .rock), (.rock, .scissors), (.scissors, .paper):
+      return .won
+    case (.scissors, .rock), (.paper, .scissors), (.rock, .paper):
+      return .lost
+    }
   }
   
   //outcome of the round (0 if you lost, 3 if the round was a draw, and 6 if you won)
@@ -73,6 +82,9 @@ struct GameRound {
 
 struct Game {
   let rounds: [GameRound]
+  var score: Int {
+    rounds.map{ $0.myScore }.reduce(0, +)
+  }
   
   init(data: Data) {
     let str = String(decoding: data, as: UTF8.self)
@@ -99,5 +111,19 @@ final class AdventDay2Tests: XCTestCase {
     XCTAssertEqual(sut.rounds.count, 2500)
   }
   
+  func test_gameInitializedFromInput_givesYou_Nscore() throws {
+    let sut = try XCTUnwrap(Game.init(data: TestBundle.inputData(for: 2)))
+    XCTAssertEqual(sut.score, 14264)
+
+  }
   
+  func test_gameRound_withBothRocks_returnsDraw() {
+    let sut = GameRound(myLetter: "X", rivalLetter: "A")
+    XCTAssertEqual(sut.outcome, .draw)
+  }
+  
+  func test_gameRound_withRock_andMyPaper_returnsWon() {
+    let sut = GameRound(myLetter: "Y", rivalLetter: "A")
+    XCTAssertEqual(sut.outcome, .won)
+  }
 }
