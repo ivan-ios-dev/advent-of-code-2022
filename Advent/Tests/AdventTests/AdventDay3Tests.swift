@@ -60,6 +60,24 @@ final class AdventDay3Tests: XCTestCase {
     XCTAssertEqual(prioritiesSum, 8039)
   }
   
+  func test_allSafetyGroups_returnsSummedPriority() {
+    let input = TestBundle.inputData(for: 3)
+    let itemRows = String(data: input, encoding: .utf8)!.components(separatedBy: "\n").filter{ !$0.isEmpty }
+    
+    var totalPriority = 0
+    
+    for i in stride(from: 0, to: itemRows.count - 1, by: 3) {
+      let first = Rucksack(itemsString: itemRows[i])
+      let second = Rucksack(itemsString: itemRows[i+1])
+      let third = Rucksack(itemsString: itemRows[i+2])
+      
+      let group = ElvesSafetyGroupBelongings(first: first, second: second, third: third)
+      totalPriority += group.badgeItem.priority
+    }
+    
+    XCTAssertEqual(totalPriority, 2510)
+  }
+  
   func test_compartment_canBeInitialized_fromEmptyString() {
     let sut = Rucksack.Compartment(itemsString: "")
     XCTAssertEqual(sut.items.count, 0)
