@@ -15,8 +15,8 @@ struct Rucksack {
   let secondCompartment: Compartment
   
   init(itemsString: String) {
-    self.firstCompartment = .init(itemsString: "")
-    self.secondCompartment = .init(itemsString: "")
+    self.firstCompartment = .init(itemsString: String(itemsString.prefix(12)))
+    self.secondCompartment = .init(itemsString: String(itemsString.suffix(12)))
   }
 }
 
@@ -37,6 +37,12 @@ final class AdventDay3Tests: XCTestCase {
     let sut = Rucksack(itemsString: "")
     XCTAssertEqual(sut.firstCompartment.items.count, 0)
     XCTAssertEqual(sut.secondCompartment.items.count, 0)
+  }
+  
+  func test_rucksack_canBeInitialized_fromItemsString() {
+    let sut = Rucksack(itemsString: "vJrwpWtwJgWrhcsFMMfFFhFp")
+    XCTAssertEqual(sut.firstCompartment.items.count, 12)
+    XCTAssertEqual(sut.secondCompartment.items.count, 12)
   }
 }
 
