@@ -18,12 +18,12 @@ struct Rucksack {
 final class AdventDay3Tests: XCTestCase {
 
   
-  func test_compartment_canBeInitialized_fromEmptyString() throws {
+  func test_compartment_canBeInitialized_fromEmptyString() {
     let sut = Rucksack.Compartment(itemsString: "")
     XCTAssertEqual(sut.items.count, 0)
   }
   
-  func test_compartment_canBeInitialized_fromItemsString() throws {
+  func test_compartment_canBeInitialized_fromItemsString() {
     let sut = Rucksack.Compartment(itemsString: "vJrwpWtwJgWr")
     XCTAssertEqual(sut.items.count, 12)
   }
