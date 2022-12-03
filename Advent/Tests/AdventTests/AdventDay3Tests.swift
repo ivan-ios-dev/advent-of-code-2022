@@ -15,8 +15,9 @@ struct Rucksack {
   let secondCompartment: Compartment
   
   init(itemsString: String) {
-    self.firstCompartment = .init(itemsString: String(itemsString.prefix(12)))
-    self.secondCompartment = .init(itemsString: String(itemsString.suffix(12)))
+    let itemsCount = itemsString.count
+    self.firstCompartment = .init(itemsString: String(itemsString.prefix(itemsCount/2)))
+    self.secondCompartment = .init(itemsString: String(itemsString.suffix(itemsCount/2)))
   }
 }
 
@@ -43,6 +44,13 @@ final class AdventDay3Tests: XCTestCase {
     let sut = Rucksack(itemsString: "vJrwpWtwJgWrhcsFMMfFFhFp")
     XCTAssertEqual(sut.firstCompartment.items.count, 12)
     XCTAssertEqual(sut.secondCompartment.items.count, 12)
+  }
+  
+  func test_rucksack_splitsTheItemsStringInHalf_duringInitialization() {
+    let itemsString = "abcDEF"
+    let sut = Rucksack(itemsString: itemsString)
+    XCTAssertEqual(sut.firstCompartment.items.count, itemsString.count / 2)
+    XCTAssertEqual(sut.secondCompartment.items.count, itemsString.count / 2)
   }
 }
 
