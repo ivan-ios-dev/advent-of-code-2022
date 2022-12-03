@@ -133,13 +133,15 @@ final class AdventDay2Tests: XCTestCase {
 
   }
   
-  func test_gameRound_withBothRocks_returnsDraw() {
+  func test_gameRound_fromXandA_returnsLost_withScoreEquals3() {
     let sut = GameRound(myLetter: "X", rivalLetter: "A")
     XCTAssertEqual(sut.outcome, .lost)
+    XCTAssertEqual(sut.myScore, 3)
   }
   
-  func test_gameRound_withRock_andMyPaper_returnsWon() {
+  func test_gameRound_fromY_andA_returnsDraw_withScoreEquals4() {
     let sut = GameRound(myLetter: "Y", rivalLetter: "A")
     XCTAssertEqual(sut.outcome, .draw)
+    XCTAssertEqual(sut.myScore, 4)
   }
 }
