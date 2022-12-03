@@ -7,6 +7,14 @@ enum HandShape {
   case paper
   case scissors
   
+  func beats() -> Self {
+    switch self {
+    case .rock: return .scissors
+    case .paper: return .rock
+    case .scissors: return .paper
+    }
+  }
+  
   //A for Rock, B for Paper, and C for Scissors
   init?(playerLetter: Character) {
     switch playerLetter {
@@ -20,19 +28,7 @@ enum HandShape {
       return nil
     }
   }
-  //X for Rock, Y for Paper, and Z for Scissors
-  init?(myLetter: Character) {
-    switch myLetter {
-    case "X":
-      self = .rock
-    case "Y":
-      self = .paper
-    case "Z":
-      self = .scissors
-    default:
-      return nil
-    }
-  }
+
   //(1 for Rock, 2 for Paper, and 3 for Scissors)
   var score: Int {
     switch self {
@@ -64,15 +60,35 @@ struct GameRound {
     case draw = 3
     case lost = 0
     case won = 6
+    //X means you need to lose, Y means you need to end the round in a draw, and Z means you need to win.
+    init?(myLetter: Character) {
+      switch myLetter {
+      case "X":
+        self = .lost
+      case "Y":
+        self = .draw
+      case "Z":
+        self = .won
+      default:
+        return nil
+      }
+    }
   }
   
   init(myLetter: Character, rivalLetter: Character) {
-    guard let myShape = HandShape(myLetter: myLetter), let rivalShape = HandShape(playerLetter: rivalLetter) else {
+    guard let myMove = Outcome(myLetter: myLetter), let rivalShape = HandShape(playerLetter: rivalLetter) else {
       fatalError("Unexpected Input!")
     }
     
-    self.myShape = myShape
     self.rivalShape = rivalShape
+    switch myMove {
+    case .draw:
+      self.myShape = rivalShape
+    case .won:
+      self.myShape = rivalShape.beats().beats()
+    case .lost:
+      self.myShape = rivalShape.beats()
+    }
   }
   
   var myScore: Int {
@@ -113,17 +129,17 @@ final class AdventDay2Tests: XCTestCase {
   
   func test_gameInitializedFromInput_givesYou_Nscore() throws {
     let sut = try XCTUnwrap(Game.init(data: TestBundle.inputData(for: 2)))
-    XCTAssertEqual(sut.score, 14264)
+    XCTAssertEqual(sut.score, 12382)
 
   }
   
   func test_gameRound_withBothRocks_returnsDraw() {
     let sut = GameRound(myLetter: "X", rivalLetter: "A")
-    XCTAssertEqual(sut.outcome, .draw)
+    XCTAssertEqual(sut.outcome, .lost)
   }
   
   func test_gameRound_withRock_andMyPaper_returnsWon() {
     let sut = GameRound(myLetter: "Y", rivalLetter: "A")
-    XCTAssertEqual(sut.outcome, .won)
+    XCTAssertEqual(sut.outcome, .draw)
   }
 }
