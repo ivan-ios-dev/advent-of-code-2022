@@ -2,48 +2,6 @@ import XCTest
 import Foundation
 @testable import Advent
 
-struct Rucksack {
-  struct Compartment {
-    let items: [Character]
-    init(itemsString: String) {
-      self.items = Array(itemsString)
-    }
-  }
-  
-  let firstCompartment: Compartment
-  let secondCompartment: Compartment
-  
-  init(itemsString: String) {
-    let itemsCount = itemsString.count
-    self.firstCompartment = .init(itemsString: String(itemsString.prefix(itemsCount/2)))
-    self.secondCompartment = .init(itemsString: String(itemsString.suffix(itemsCount/2)))
-  }
-  
-  var duplicate: Character {
-    let firstItems = Set(firstCompartment.items)
-    let secondItems = Set(secondCompartment.items)
-    let duplicates = firstItems.intersection(secondItems)
-    return duplicates.first!
-  }
-  
-  var allItems: [Character] {
-    return firstCompartment.items + secondCompartment.items
-  }
-}
-
-struct ElvesSafetyGroupBelongings {
-  let first: Rucksack
-  let second: Rucksack
-  let third: Rucksack
-  
-  var badgeItem: Character {
-    let firstSet = Set(first.allItems)
-    let secondSet = Set(second.allItems)
-    let thirdSet = Set(third.allItems)
-    return firstSet.intersection(secondSet).intersection(thirdSet).first!
-  }
-}
-
 final class AdventDay3Tests: XCTestCase {
   
   func test_allRucksacks_fromInput() throws {
