@@ -5,7 +5,6 @@ import Foundation
 struct Rucksack {
   struct Compartment {
     let items: [Character]
-    
     init(itemsString: String) {
       self.items = Array(itemsString)
     }
@@ -19,11 +18,17 @@ struct Rucksack {
     self.firstCompartment = .init(itemsString: String(itemsString.prefix(itemsCount/2)))
     self.secondCompartment = .init(itemsString: String(itemsString.suffix(itemsCount/2)))
   }
+  
+  var duplicate: Character {
+    let firstItems = Set(firstCompartment.items)
+    let secondItems = Set(secondCompartment.items)
+    let duplicates = firstItems.intersection(secondItems)
+    return duplicates.first!
+  }
 }
 
 final class AdventDay3Tests: XCTestCase {
 
-  
   func test_compartment_canBeInitialized_fromEmptyString() {
     let sut = Rucksack.Compartment(itemsString: "")
     XCTAssertEqual(sut.items.count, 0)
@@ -47,6 +52,12 @@ final class AdventDay3Tests: XCTestCase {
     XCTAssertEqual(sut.firstCompartment.items, ["a", "b", "c"])
     XCTAssertEqual(sut.secondCompartment.items.count, itemsString.count / 2)
     XCTAssertEqual(sut.secondCompartment.items, ["D", "E", "F"])
+  }
+  
+  func test_rucksack_knowsWhichItemIsPresent_inBothCompartments() {
+    let itemsString = "abcDbF"
+    let sut = Rucksack(itemsString: itemsString)
+    XCTAssertEqual(sut.duplicate, "b")
   }
 }
 
