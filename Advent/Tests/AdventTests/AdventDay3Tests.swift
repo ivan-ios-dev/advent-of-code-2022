@@ -59,5 +59,30 @@ final class AdventDay3Tests: XCTestCase {
     let sut = Rucksack(itemsString: itemsString)
     XCTAssertEqual(sut.duplicate, "b")
   }
+  
+  func test_item_canBeConverted_intoPriority() {
+    let a: Character = "a"
+    XCTAssertEqual(a.priority, 1)
+    let b: Character = "b"
+    XCTAssertEqual(b.priority, 2)
+    let z: Character = "z"
+    XCTAssertEqual(z.priority, 26)
+    let A: Character = "A"
+    XCTAssertEqual(A.priority, 27)
+    let Z: Character = "Z"
+    XCTAssertEqual(Z.priority, 52)
+  }
 }
 
+extension Character {
+  var priority: Int {
+    switch self {
+    case "a"..."z":
+      return Int(self.asciiValue!) - 96
+    case "A"..."Z":
+      return Int(self.asciiValue!) - 38
+    default:
+      return -1
+    }
+  }
+}
