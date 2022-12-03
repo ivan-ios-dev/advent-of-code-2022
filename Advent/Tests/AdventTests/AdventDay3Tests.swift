@@ -25,6 +25,23 @@ struct Rucksack {
     let duplicates = firstItems.intersection(secondItems)
     return duplicates.first!
   }
+  
+  var allItems: [Character] {
+    return firstCompartment.items + secondCompartment.items
+  }
+}
+
+struct ElvesSafetyGroupBelongings {
+  let first: Rucksack
+  let second: Rucksack
+  let third: Rucksack
+  
+  var badgeItem: Character {
+    let firstSet = Set(first.allItems)
+    let secondSet = Set(second.allItems)
+    let thirdSet = Set(third.allItems)
+    return firstSet.intersection(secondSet).intersection(thirdSet).first!
+  }
 }
 
 final class AdventDay3Tests: XCTestCase {
@@ -85,6 +102,15 @@ final class AdventDay3Tests: XCTestCase {
     XCTAssertEqual(A.priority, 27)
     let Z: Character = "Z"
     XCTAssertEqual(Z.priority, 52)
+  }
+  
+  func test_elvesSafetyGroupBelongings_knowsBadgeItem() {
+    let sut = ElvesSafetyGroupBelongings(
+      first: .init(itemsString: "vJrwpWtwJgWrhcsFMMfFFhFp"),
+      second: .init(itemsString: "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL"),
+      third: .init(itemsString: "PmmdzqPrVvPwwTWBwg")
+    )
+    XCTAssertEqual(sut.badgeItem, "r")
   }
 }
 
