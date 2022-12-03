@@ -7,7 +7,7 @@ struct Rucksack {
     let items: [Character]
     
     init(itemsString: String) {
-      self.items = []
+      self.items = Array(itemsString)
     }
   }
   
@@ -23,6 +23,10 @@ final class AdventDay3Tests: XCTestCase {
     XCTAssertEqual(sut.items.count, 0)
   }
   
+  func test_compartment_canBeInitialized_fromItemsString() throws {
+    let sut = Rucksack.Compartment(itemsString: "vJrwpWtwJgWr")
+    XCTAssertEqual(sut.items.count, 12)
+  }
   
 }
 
