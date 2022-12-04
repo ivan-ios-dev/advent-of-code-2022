@@ -8,10 +8,26 @@ struct CampSection: Equatable {
     return bounds.first! <= section.bounds.first! &&
            bounds.last! >= section.bounds.last!
   }
+  
+  init(bounds: ClosedRange<Int>) {
+    self.bounds = bounds
+  }
+  
+  init?(boundsString: String) {
+    let components = boundsString.components(separatedBy: "-")
+    guard components.count == 2 else {
+      return nil
+    }
+    
+    guard let begin = Int(components[0]), let end = Int(components[1]), begin <= end else {
+      return nil
+    }
+    
+    self.bounds = begin...end
+  }
 }
 
 final class AdventDay4Tests: XCTestCase {
-  
   
   func test_campSections_areEqual_whenBoundsAreTheSame() {
     let s1 = CampSection(bounds: 1...2)
@@ -27,5 +43,12 @@ final class AdventDay4Tests: XCTestCase {
     XCTAssertTrue(bigger.fullyContains(section: smaller))
     XCTAssertFalse(smaller.fullyContains(section: bigger))
     XCTAssertTrue(smaller.fullyContains(section: smaller))
+  }
+  
+  func test_campSection_canBeInitializedFromString() {
+    let sut = CampSection(boundsString: "2-8")
+    let known = CampSection(bounds: 2...8)
+    
+    XCTAssertEqual(sut, known)
   }
 }
