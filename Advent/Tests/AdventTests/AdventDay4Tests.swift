@@ -5,8 +5,9 @@ struct CampSection: Equatable {
   let bounds: ClosedRange<Int>
   
   func fullyContains(section: CampSection) -> Bool {
-    return bounds.first! <= section.bounds.first! &&
-           bounds.last! >= section.bounds.last!
+    return bounds.lowerBound <= section.bounds.lowerBound &&
+    bounds.upperBound >= section.bounds.upperBound
+  }
   }
   
   init(bounds: ClosedRange<Int>) {
