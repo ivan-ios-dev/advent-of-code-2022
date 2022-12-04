@@ -51,4 +51,26 @@ final class AdventDay4Tests: XCTestCase {
     
     XCTAssertEqual(sut, known)
   }
+  
+  func test_campPlan_has569SectionOverlappings() throws {
+    let input = TestBundle.inputData(for: 4)
+    let itemRows = String(data: input, encoding: .utf8)!.components(separatedBy: "\n").filter{ !$0.isEmpty }
+    
+    var intersectionsCount = 0
+    
+    for item in itemRows {
+      let sectionStrings = item.components(separatedBy: ",")
+      
+      guard let firstSection = CampSection(boundsString: sectionStrings.first!),
+            let secondSection = CampSection(boundsString: sectionStrings.last!) else {
+        return
+      }
+      
+      if firstSection.fullyContains(section: secondSection) || secondSection.fullyContains(section: firstSection) {
+        intersectionsCount += 1
+      }
+    }
+    
+    XCTAssertEqual(intersectionsCount, 569)
+  }
 }
