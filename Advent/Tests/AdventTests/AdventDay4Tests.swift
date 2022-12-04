@@ -8,6 +8,9 @@ struct CampSection: Equatable {
     return bounds.lowerBound <= section.bounds.lowerBound &&
     bounds.upperBound >= section.bounds.upperBound
   }
+  
+  func overlaps(with section: CampSection) -> Bool {
+    return bounds.overlaps(section.bounds)
   }
   
   init(bounds: ClosedRange<Int>) {
@@ -53,7 +56,29 @@ final class AdventDay4Tests: XCTestCase {
     XCTAssertEqual(sut, known)
   }
   
-  func test_campPlan_has569SectionOverlappings() throws {
+  func test_campPlan_has936partialOverlappings() throws {
+    let input = TestBundle.inputData(for: 4)
+    let itemRows = String(data: input, encoding: .utf8)!.components(separatedBy: "\n").filter{ !$0.isEmpty }
+    
+    var intersectionsCount = 0
+    
+    for item in itemRows {
+      let sectionStrings = item.components(separatedBy: ",")
+      
+      guard let firstSection = CampSection(boundsString: sectionStrings.first!),
+            let secondSection = CampSection(boundsString: sectionStrings.last!) else {
+        return
+      }
+      
+      if firstSection.overlaps(with: secondSection) {
+        intersectionsCount += 1
+      }
+    }
+    
+    XCTAssertEqual(intersectionsCount, 936)
+  }
+  
+  func test_campPlan_has569SectionFullOverlappings() throws {
     let input = TestBundle.inputData(for: 4)
     let itemRows = String(data: input, encoding: .utf8)!.components(separatedBy: "\n").filter{ !$0.isEmpty }
     
