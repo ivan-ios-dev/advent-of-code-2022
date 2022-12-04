@@ -57,19 +57,9 @@ final class AdventDay4Tests: XCTestCase {
   }
   
   func test_campPlan_has936partialOverlappings() throws {
-    let input = TestBundle.inputData(for: 4)
-    let itemRows = String(data: input, encoding: .utf8)!.components(separatedBy: "\n").filter{ !$0.isEmpty }
-    
     var intersectionsCount = 0
     
-    for item in itemRows {
-      let sectionStrings = item.components(separatedBy: ",")
-      
-      guard let firstSection = CampSection(boundsString: sectionStrings.first!),
-            let secondSection = CampSection(boundsString: sectionStrings.last!) else {
-        return
-      }
-      
+    for (firstSection, secondSection) in try inputSections() {
       if firstSection.overlaps(with: secondSection) {
         intersectionsCount += 1
       }
@@ -79,19 +69,9 @@ final class AdventDay4Tests: XCTestCase {
   }
   
   func test_campPlan_has569SectionFullOverlappings() throws {
-    let input = TestBundle.inputData(for: 4)
-    let itemRows = String(data: input, encoding: .utf8)!.components(separatedBy: "\n").filter{ !$0.isEmpty }
-    
     var intersectionsCount = 0
     
-    for item in itemRows {
-      let sectionStrings = item.components(separatedBy: ",")
-      
-      guard let firstSection = CampSection(boundsString: sectionStrings.first!),
-            let secondSection = CampSection(boundsString: sectionStrings.last!) else {
-        return
-      }
-      
+    for (firstSection, secondSection) in try inputSections() {
       if firstSection.fullyContains(section: secondSection) || secondSection.fullyContains(section: firstSection) {
         intersectionsCount += 1
       }
@@ -99,4 +79,26 @@ final class AdventDay4Tests: XCTestCase {
     
     XCTAssertEqual(intersectionsCount, 569)
   }
+  
+  private func inputSections() throws -> [(first: CampSection, second: CampSection)] {
+    let input = TestBundle.inputData(for: 4)
+    let itemRows = String(data: input, encoding: .utf8)!.components(separatedBy: "\n").filter{ !$0.isEmpty }
+    
+    var output: [(first: CampSection, second: CampSection)] = []
+    for item in itemRows {
+      let sectionStrings = item.components(separatedBy: ",")
+      
+      guard let firstSection = CampSection(boundsString: sectionStrings.first!),
+            let secondSection = CampSection(boundsString: sectionStrings.last!) else {
+        throw "Cannot create sections from input!"
+      }
+      
+      output.append(
+        (first: firstSection, second: secondSection)
+      )
+    }
+    
+    return output
+  }
 }
+
