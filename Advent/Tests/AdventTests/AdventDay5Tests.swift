@@ -1,7 +1,7 @@
 import Foundation
 import XCTest
 
-class CargoCrane {
+final class CargoCrane {
   struct MoveCommand {
     let amount: Int
     let fromStackIndex: Int
@@ -37,7 +37,7 @@ class CargoCrane {
   }
 }
 
-class CrateStack {
+final class CrateStack {
   var crates: [Character]
   let index: Int
   
