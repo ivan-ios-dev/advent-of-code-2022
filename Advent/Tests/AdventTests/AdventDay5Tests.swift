@@ -61,6 +61,35 @@ final class CrateStack {
 
 final class AdventDay5Tests: XCTestCase {
   
+  func test_cargoField_canBeInitialized_fromInputString() throws {
+    let inputString = """
+                [J] [Z] [G]
+                [Z] [T] [S] [P] [R]
+    [R]         [Q] [V] [B] [G] [J]
+    [W] [W]     [N] [L] [V] [W] [C]
+    [F] [Q]     [T] [G] [C] [T] [T] [W]
+    [H] [D] [W] [W] [H] [T] [R] [M] [B]
+    [T] [G] [T] [R] [B] [P] [B] [G] [G]
+    [S] [S] [B] [D] [F] [L] [Z] [N] [L]
+     1   2   3   4   5   6   7   8   9
+    """
+    
+    let rows = inputString.components(separatedBy: "\n")
+    
+    for row in rows {
+      //Crates
+      if row.contains("[") {
+        
+        
+        
+      } else { //Crate Index
+        
+      }
+    }
+    
+    XCTAssertEqual(rows.count, 9)
+  }
+  
   func test_moveCommand_canBeInitializedFromString() {
     let sut = CargoCrane.MoveCommand(command: "move 1 from 2 to 1")
     XCTAssertEqual(sut?.amount, 1)
