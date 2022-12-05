@@ -1,6 +1,20 @@
 import Foundation
 import XCTest
 
+  struct MoveCommand {
+    let amount: Int
+    let fromStackIndex: Int
+    let toStackIndex: Int
+    
+    init?(command: String) {
+      let parts = command.components(separatedBy: .letters).filter{ !$0.isEmpty }.map{ $0.replacingOccurrences(of: " ", with: "") }
+      guard parts.count == 3 else {
+        return nil
+      }
+      self.amount = Int(parts[0])!
+      self.fromStackIndex = Int(parts[1])!
+      self.toStackIndex = Int(parts[2])!
+    }
 class CrateStack {
   var crates: [Character]
   let index: Int
@@ -24,6 +38,12 @@ class CrateStack {
 }
 
 final class AdventDay5Tests: XCTestCase {
+  func test_moveCommand_canBeInitializedFromString() {
+    let sut = CargoCrane.MoveCommand(command: "move 1 from 2 to 1")
+    XCTAssertEqual(sut?.amount, 1)
+    XCTAssertEqual(sut?.fromStackIndex, 2)
+    XCTAssertEqual(sut?.toStackIndex, 1)
+  }
   func test_crateStack_hasIndex() {
     let sut = CrateStack(index: 0)
     XCTAssertEqual(sut.index, 0)
