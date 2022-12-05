@@ -1,6 +1,7 @@
 import Foundation
 import XCTest
 
+class CargoCrane {
   struct MoveCommand {
     let amount: Int
     let fromStackIndex: Int
@@ -15,6 +16,27 @@ import XCTest
       self.fromStackIndex = Int(parts[1])!
       self.toStackIndex = Int(parts[2])!
     }
+  }
+  
+  let cargoField: [CrateStack]
+  
+  init(cargoField: [CrateStack]) {
+    self.cargoField = cargoField
+  }
+  
+  func perform(command: MoveCommand) {
+    if let sourceStack = cargoField.first(where: { $0.index == command.fromStackIndex } ),
+        let destinationStack = cargoField.first(where: { $0.index == command.toStackIndex }) {
+      
+      for _ in 1...command.amount {
+        if let crate = sourceStack.takeCrate() {
+          destinationStack.add(crate: crate)
+        }
+      }
+    }
+  }
+}
+
 class CrateStack {
   var crates: [Character]
   let index: Int
@@ -38,12 +60,26 @@ class CrateStack {
 }
 
 final class AdventDay5Tests: XCTestCase {
+  
   func test_moveCommand_canBeInitializedFromString() {
     let sut = CargoCrane.MoveCommand(command: "move 1 from 2 to 1")
     XCTAssertEqual(sut?.amount, 1)
     XCTAssertEqual(sut?.fromStackIndex, 2)
     XCTAssertEqual(sut?.toStackIndex, 1)
   }
+  
+  func test_cargoCrane_performsMoveCommand() throws {
+    let sut = CargoCrane(cargoField: [
+      .init(crates: ["Z", "N"], index: 1),
+      .init(crates: ["M", "C", "D"], index: 2)
+    ])
+    
+    let command = try XCTUnwrap(CargoCrane.MoveCommand(command: "move 1 from 2 to 1"))
+    sut.perform(command: command)
+    XCTAssertEqual(sut.cargoField[0].crates, ["Z", "N", "D"])
+    XCTAssertEqual(sut.cargoField[1].crates, ["M", "C"])
+  }
+  
   func test_crateStack_hasIndex() {
     let sut = CrateStack(index: 0)
     XCTAssertEqual(sut.index, 0)
