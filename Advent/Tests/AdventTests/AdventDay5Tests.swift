@@ -19,9 +19,11 @@ final class CargoCrane {
   }
   
   let cargoField: [CrateStack]
+  let commands: [MoveCommand]
   
-  init(cargoField: [CrateStack]) {
+  init(cargoField: [CrateStack], commands: [MoveCommand] = []) {
     self.cargoField = cargoField
+    self.commands = commands
   }
   
   func perform(command: MoveCommand) {
@@ -38,11 +40,11 @@ final class CargoCrane {
 }
 
 extension CargoCrane {
-  
   convenience init?(withInput: String) {
     let rows = withInput.components(separatedBy: "\n")
     
     var crates: [CrateStack] = []
+    var commands: [MoveCommand] = []
     
     for row in rows {
       //Crates
@@ -64,13 +66,16 @@ extension CargoCrane {
             }
           }
         }
-      } else { //Crate Index
+      } else if row.contains("move") { // Command
+        if let command = MoveCommand(command: row) {
+          commands.append(command)
+        }
+      } else { //Crate Index or last empty line
         print("Row: \(row)")
-        break
       }
     }
     
-    self.init(cargoField: crates)
+    self.init(cargoField: crates, commands: commands)
   }
 }
 
@@ -101,6 +106,21 @@ final class CrateStack: Equatable {
 }
 
 final class AdventDay5Tests: XCTestCase {
+  
+  func test_cargoField_andCommandsList_canBeInitialized_fromInput() throws {
+    let input = TestBundle.inputData(for: 5)
+    let inputString = try XCTUnwrap(String(data: input, encoding: .utf8)) // !.components(separatedBy: "\n").filter{ !$0.isEmpty }
+    
+    let crane = try XCTUnwrap(CargoCrane(withInput: inputString))
+    
+    XCTAssertEqual(crane.cargoField.count, 9)
+    XCTAssertEqual(
+      crane.cargoField.first(where: { $0.index == 1 }),
+      CrateStack(crates: ["S", "T", "H", "F", "W", "R"], index: 1)
+    )
+    
+    XCTAssertEqual(crane.commands.count, 502)
+  }
   
   func test_cargoField_canBeInitialized_fromInputString() throws {
     let inputString = """
