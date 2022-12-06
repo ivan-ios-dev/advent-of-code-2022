@@ -1,7 +1,27 @@
 import Foundation
 import XCTest
 
-final class CargoCrane {
+final class CargoCrane9001: CargoCrane {
+  override func perform(command: CargoCrane.MoveCommand) {
+    if let sourceStack = cargoField.first(where: { $0.index == command.fromStackIndex } ),
+        let destinationStack = cargoField.first(where: { $0.index == command.toStackIndex }) {
+      
+      var cratesCache: [Character] = []
+      
+      for _ in 1...command.amount {
+        if let crate = sourceStack.takeCrate() {
+          cratesCache.append(crate)
+        }
+      }
+      
+      for crate in cratesCache.reversed() {
+        destinationStack.add(crate: crate)
+      }
+    }
+  }
+}
+
+class CargoCrane {
   struct MoveCommand {
     let amount: Int
     let fromStackIndex: Int
@@ -117,6 +137,19 @@ final class CrateStack: Equatable {
 }
 
 final class AdventDay5Tests: XCTestCase {
+  
+  func test_cargoCrane9001_movesSeveralCratesAtOnce() {
+    let sut = CargoCrane9001(cargoField: [
+      .init(crates: ["A", "B"], index: 1),
+      .init(crates: ["C", "D", "E"], index: 2)
+    ], commands: [
+      .init(command: "move 3 from 2 to 1")!
+    ])
+    
+    sut.performAllCommands()
+    
+    XCTAssertEqual(sut.cargoField[0].crates, ["A", "B", "C", "D", "E"])
+  }
   
   func test_cargoCrane_returnsTopCratesList() {
     let s1 = CargoCrane(cargoField: [
