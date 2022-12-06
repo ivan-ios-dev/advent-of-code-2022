@@ -137,6 +137,16 @@ final class CrateStack: Equatable {
 }
 
 final class AdventDay5Tests: XCTestCase {
+  func test_cargoCrane9001_processesMoveCommandList_fromInput() throws {
+    let input = TestBundle.inputData(for: 5)
+    let inputString = try XCTUnwrap(String(data: input, encoding: .utf8)) // !.components(separatedBy: "\n").filter{ !$0.isEmpty }
+    
+    let crane = try XCTUnwrap(CargoCrane9001(withInput: inputString))
+    
+    crane.performAllCommands()
+    
+    XCTAssertEqual(crane.topCratesString(),"PRTTGRFPB")
+  }
   
   func test_cargoCrane9001_movesSeveralCratesAtOnce() {
     let sut = CargoCrane9001(cargoField: [
@@ -164,7 +174,6 @@ final class AdventDay5Tests: XCTestCase {
     ])
     XCTAssertEqual(s2.topCratesString(), "EB")
   }
-  
   
   func test_cargoCrane_processesMoveCommandList_fromInput() throws {
     let input = TestBundle.inputData(for: 5)
