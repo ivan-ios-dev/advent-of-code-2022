@@ -37,6 +37,43 @@ final class CargoCrane {
   }
 }
 
+extension CargoCrane {
+  
+  convenience init?(withInput: String) {
+    let rows = withInput.components(separatedBy: "\n")
+    
+    var crates: [CrateStack] = []
+    
+    for row in rows {
+      //Crates
+      if row.contains("[") {
+        let chars = Array(row)
+
+        for i in 0..<chars.count {
+          let char = chars[i]
+          if char == "[" {
+            let crate = chars[i+1]
+            let index = i/4 + 1
+            
+            if let existing = crates.first(where: { $0.index == index }) {
+              existing.crates.insert(crate, at: 0)
+            } else {
+              let new = CrateStack(index: index)
+              new.add(crate: crate)
+              crates.append(new)
+            }
+          }
+        }
+      } else { //Crate Index
+        print("Row: \(row)")
+        break
+      }
+    }
+    
+    self.init(cargoField: crates)
+  }
+}
+
 final class CrateStack: Equatable {
   static func == (lhs: CrateStack, rhs: CrateStack) -> Bool {
     return lhs.index == rhs.index && lhs.crates == rhs.crates
@@ -78,38 +115,11 @@ final class AdventDay5Tests: XCTestCase {
      1   2   3   4   5   6   7   8   9
     """
     
-    let rows = inputString.components(separatedBy: "\n")
+    let crane = try XCTUnwrap(CargoCrane(withInput: inputString))
     
-    var crates: [CrateStack] = []
-    
-    for row in rows {
-      //Crates
-      if row.contains("[") {
-        let chars = Array(row)
-
-        for i in 0..<chars.count {
-          let char = chars[i]
-          if char == "[" {
-            let crate = chars[i+1]
-            let index = i/4 + 1
-            
-            if let existing = crates.first(where: { $0.index == index }) {
-              existing.crates.insert(crate, at: 0)
-            } else {
-              let new = CrateStack(index: index)
-              new.add(crate: crate)
-              crates.append(new)
-            }
-          }
-        }
-      } else { //Crate Index
-        print("Row: \(row)")
-      }
-    }
-    
-    XCTAssertEqual(crates.count, 9)
+    XCTAssertEqual(crane.cargoField.count, 9)
     XCTAssertEqual(
-      crates.first(where: { $0.index == 1 }),
+      crane.cargoField.first(where: { $0.index == 1 }),
       CrateStack(crates: ["S", "T", "H", "F", "W", "R"], index: 1)
     )
   }
