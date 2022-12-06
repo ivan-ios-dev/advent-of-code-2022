@@ -37,6 +37,17 @@ final class CargoCrane {
       }
     }
   }
+  
+  func performAllCommands() {
+    for command in commands {
+      perform(command: command)
+    }
+  }
+  
+  func topCratesString() -> String {
+    let topCrates = cargoField.sorted(by: { $0.index < $1.index }).compactMap{ $0.topCrate }
+    return String(topCrates)
+  }
 }
 
 extension CargoCrane {
@@ -106,6 +117,32 @@ final class CrateStack: Equatable {
 }
 
 final class AdventDay5Tests: XCTestCase {
+  
+  func test_cargoCrane_returnsTopCratesList() {
+    let s1 = CargoCrane(cargoField: [
+      .init(crates: ["A", "B"], index: 1),
+      .init(crates: ["C", "D", "E"], index: 2)
+    ])
+    XCTAssertEqual(s1.topCratesString(), "BE")
+
+    let s2 = CargoCrane(cargoField: [
+      .init(crates: ["A", "B"], index: 2),
+      .init(crates: ["C", "D", "E"], index: 1)
+    ])
+    XCTAssertEqual(s2.topCratesString(), "EB")
+  }
+  
+  
+  func test_cargoCrane_processesMoveCommandList_fromInput() throws {
+    let input = TestBundle.inputData(for: 5)
+    let inputString = try XCTUnwrap(String(data: input, encoding: .utf8)) // !.components(separatedBy: "\n").filter{ !$0.isEmpty }
+    
+    let crane = try XCTUnwrap(CargoCrane(withInput: inputString))
+    
+    crane.performAllCommands()
+    
+    XCTAssertEqual(crane.topCratesString(),"ZRLJGSCTR")
+  }
   
   func test_cargoField_andCommandsList_canBeInitialized_fromInput() throws {
     let input = TestBundle.inputData(for: 5)
