@@ -37,7 +37,11 @@ final class CargoCrane {
   }
 }
 
-final class CrateStack {
+final class CrateStack: Equatable {
+  static func == (lhs: CrateStack, rhs: CrateStack) -> Bool {
+    return lhs.index == rhs.index && lhs.crates == rhs.crates
+  }
+  
   var crates: [Character]
   let index: Int
   
@@ -76,18 +80,38 @@ final class AdventDay5Tests: XCTestCase {
     
     let rows = inputString.components(separatedBy: "\n")
     
+    var crates: [CrateStack] = []
+    
     for row in rows {
       //Crates
       if row.contains("[") {
-        
-        
-        
+        let chars = Array(row)
+
+        for i in 0..<chars.count {
+          let char = chars[i]
+          if char == "[" {
+            let crate = chars[i+1]
+            let index = i/4 + 1
+            
+            if let existing = crates.first(where: { $0.index == index }) {
+              existing.crates.insert(crate, at: 0)
+            } else {
+              let new = CrateStack(index: index)
+              new.add(crate: crate)
+              crates.append(new)
+            }
+          }
+        }
       } else { //Crate Index
-        
+        print("Row: \(row)")
       }
     }
     
-    XCTAssertEqual(rows.count, 9)
+    XCTAssertEqual(crates.count, 9)
+    XCTAssertEqual(
+      crates.first(where: { $0.index == 1 }),
+      CrateStack(crates: ["S", "T", "H", "F", "W", "R"], index: 1)
+    )
   }
   
   func test_moveCommand_canBeInitializedFromString() {
