@@ -38,6 +38,41 @@ struct Signal {
     
     return output
   }
+  
+  var startOfMessageMarker: (String, Int) {
+    var slidingWindow: (start: Int, end: Int) = (0,0)
+    
+    let dataStream = Array(raw)
+    var output: (String, Int) = ("", 0)
+    
+    for i in 0..<dataStream.count {
+      if slidingWindow.end - slidingWindow.start < 13 {
+        slidingWindow.end += 1
+      } else if slidingWindow.end - slidingWindow.start == 13 {
+        var unique: Set<Character> = []
+        
+        for j in slidingWindow.start...slidingWindow.end {
+          unique.insert(dataStream[j])
+        }
+        
+        if unique.count == 14 {
+          let markerChars = dataStream[slidingWindow.start...slidingWindow.end]
+          output = (String(markerChars), i+1)
+          break
+        }
+        
+        slidingWindow.start += 1
+        slidingWindow.end += 1
+        
+        if slidingWindow.end > dataStream.count - 1 {
+          break
+        }
+      }
+    }
+    
+    return output
+  }
+  
 }
 
 final class AdventDay6Tests: XCTestCase {
@@ -51,7 +86,6 @@ final class AdventDay6Tests: XCTestCase {
     let (marker2, count2) = s2.startOfPacketMarker
     XCTAssertEqual(marker2, "jpqm")
     XCTAssertEqual(count2, 7)
-
   }
   
   func test_signal_knowsStartOfPacketMarker_fromInput() throws {
@@ -63,6 +97,27 @@ final class AdventDay6Tests: XCTestCase {
     
     XCTAssertEqual(marker, "tjlm")
     XCTAssertEqual(count, 1542)
+  }
+  
+  func test_signal_knowsStartOfMessageMarker() throws {
+    let inputString = "mjqjpqmgbljsphdztnvjfqwrcgsmlb"
+    
+    let sut = Signal(raw: inputString)
+    let (marker, count) = sut.startOfMessageMarker
+    
+    XCTAssertEqual(marker, "qmgbljsphdztnv")
+    XCTAssertEqual(count, 19)
+  }
+  
+  func test_signal_knowsStartOfMessageMarker_fromInput() throws {
+    let input = TestBundle.inputData(for: 6)
+    let inputString = try XCTUnwrap(String(data: input, encoding: .utf8))
+    
+    let sut = Signal(raw: inputString)
+    let (marker, count) = sut.startOfMessageMarker
+    
+    XCTAssertEqual(marker, "trjcwsmpgflhdq")
+    XCTAssertEqual(count, 3153)
   }
 }
 
