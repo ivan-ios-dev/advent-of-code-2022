@@ -5,42 +5,54 @@ import XCTest
 struct Signal {
   let raw: String
   
-  var startOfPacketMarker: String {
+  var startOfPacketMarker: (String, Int) {
     var slidingWindow: (start: Int, end: Int) = (0,0)
     
     let dataStream = Array(raw)
+    var output: (String, Int) = ("", 0)
     
-    for char in dataStream {
-      if slidingWindow.end - slidingWindow.start < 4 {
+    for i in 0..<dataStream.count {
+      if slidingWindow.end - slidingWindow.start < 3 {
         slidingWindow.end += 1
-      } else {
-        
+      } else if slidingWindow.end - slidingWindow.start == 3 {
         var unique: Set<Character> = []
         
-        for i in slidingWindow.start...slidingWindow.end {
-          unique.insert(dataStream[i])
+        for j in slidingWindow.start...slidingWindow.end {
+          unique.insert(dataStream[j])
         }
         
         if unique.count == 4 {
-          return dataStream[slidingWindow.start...slidingWindow.end]
+          let markerChars = dataStream[slidingWindow.start...slidingWindow.end]
+          output = (String(markerChars), i+1)
+          break
         }
         
         slidingWindow.start += 1
         slidingWindow.end += 1
+        
+        if slidingWindow.end > dataStream.count - 1 {
+          break
+        }
       }
-      
-      
     }
     
-    return String(dataStream.suffix(2))
+    return output
   }
 }
 
 final class AdventDay6Tests: XCTestCase {
   func test_signal_knowsStartOfPacketMarker() {
-    let sut = Signal(dataStream: "12134")
+    let s1 = Signal(raw: "12134")
+    let (marker1, count1) = s1.startOfPacketMarker
+    XCTAssertEqual(marker1, "2134")
+    XCTAssertEqual(count1, 5)
     
-    XCTAssertEqual(sut.startOfPacketMarker, "2134")
+    let s2 = Signal(raw: "mjqjpqmgbljsphdztnvjfqwrcgsmlb")
+    let (marker2, count2) = s2.startOfPacketMarker
+    XCTAssertEqual(marker2, "jpqm")
+    XCTAssertEqual(count2, 7)
+
   }
+  
 }
 
