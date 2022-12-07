@@ -54,5 +54,15 @@ final class AdventDay6Tests: XCTestCase {
 
   }
   
+  func test_signal_knowsStartOfPacketMarker_fromInput() throws {
+    let input = TestBundle.inputData(for: 6)
+    let inputString = try XCTUnwrap(String(data: input, encoding: .utf8))
+    
+    let sut = Signal(raw: inputString)
+    let (marker, count) = sut.startOfPacketMarker
+    
+    XCTAssertEqual(marker, "tjlm")
+    XCTAssertEqual(count, 1542)
+  }
 }
 
